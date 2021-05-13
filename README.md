@@ -18,7 +18,7 @@ My Website, more Information will be added later here:
 http://soenke-berlin.de/
 
 ## Introduction
-This is a simple hhtp 1.0 Webserver for Delphi and Lazarus. It only needs Indy 10. The Webserver is basically build on the tcp Socket, so i more or less implement the http 1.0 protocol myself. Therefore it is highly portable and can be easily compiled on different systems! I implement the most important http 1.0 stuff myself so that it work easily. If you need a reliable and secure Webserver, i recommend you to use Nginx or Apache Webserver. For the last one there is also xampp (a ready to go solution), if you need a fast setup for testing purposes.
+This is a simple http 1.0 Webserver for Delphi and Lazarus. It only needs Indy 10. The Webserver is basically build on the tcp Socket, so i more or less implement the http 1.0 protocol myself. Therefore it is highly portable and can be easily compiled on different systems! I implement the most important http 1.0 stuff myself so that it work easily. If you need a reliable and secure Webserver, i recommend you to use Nginx or Apache Webserver. For the last one there is also xampp (a ready to go solution), if you need a fast setup for testing purposes.
 You can compile with Lazarus on all Systems and of course in Delphi.
 Testet with Delphi 10.3 and different Lazarus Versions on different Plattforms and Operating Systems.
 
