@@ -45,6 +45,17 @@ Or just do it by your own ;)
 ### In General
 My Comments on the Source Code are in German and English, sorry that i mixed it...
 
+## Screenshots
+The Webserver after starting:
+
+![Example screenshot 1](http://soenke-berlin.de/webserver/simpleWebserver1_7_example1.png)
+
+You can start right away without making a lot of configurations.
+
+
+An example request to the web server:
+
+![example screenshot 2](http://soenke-berlin.de/webserver/simpleWebserver1_7_example2.png)
 
 ## Licence
 GPL-3.0 License 
