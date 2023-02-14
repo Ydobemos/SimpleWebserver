@@ -1,43 +1,44 @@
 object Form1: TForm1
-  Left = 241
-  Height = 560
-  Top = 230
-  Width = 348
+  Left = 267
+  Height = 853
+  Top = 104
+  Width = 522
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Simple Webserver'
-  ClientHeight = 540
-  ClientWidth = 348
+  ClientHeight = 823
+  ClientWidth = 522
+  DesignTimePPI = 144
   Menu = MainMenu1
   OnCreate = FormCreate
   Position = poMainFormCenter
-  LCLVersion = '2.0.6.0'
+  LCLVersion = '2.2.4.0'
   object PageControl1: TPageControl
     Left = 0
-    Height = 440
+    Height = 660
     Top = 0
-    Width = 344
+    Width = 516
     ActivePage = TabSheet1
     TabIndex = 0
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Einstellungen'
-      ClientHeight = 412
-      ClientWidth = 336
+      ClientHeight = 622
+      ClientWidth = 508
       object GroupBox1: TGroupBox
         Left = 0
-        Height = 106
-        Top = 128
-        Width = 336
+        Height = 159
+        Top = 192
+        Width = 504
         Caption = 'Error 404 Fehler Seite'
-        ClientHeight = 86
-        ClientWidth = 332
+        ClientHeight = 129
+        ClientWidth = 500
         TabOrder = 0
         object RadioButton1: TRadioButton
-          Left = 16
-          Height = 19
-          Top = 16
-          Width = 185
+          Left = 24
+          Height = 29
+          Top = 24
+          Width = 285
           Caption = 'Standard Error 404 Seite senden'
           Checked = True
           OnClick = RadioButton1Click
@@ -45,34 +46,34 @@ object Form1: TForm1
           TabStop = True
         end
         object RadioButton2: TRadioButton
-          Left = 16
-          Height = 19
-          Top = 32
-          Width = 257
+          Left = 24
+          Height = 29
+          Top = 48
+          Width = 385
           Caption = 'Eigene definierte 404 (html) Seite verwenden:'
           OnClick = RadioButton2Click
           TabOrder = 1
         end
         object Label5: TLabel
-          Left = 8
-          Height = 15
+          Left = 12
+          Height = 25
           Top = 0
-          Width = 154
+          Width = 228
           Caption = 'Bei ungültigem Seiten aufruf:'
           ParentColor = False
         end
         object Edit3: TEdit
-          Left = 43
-          Height = 23
-          Top = 56
-          Width = 221
+          Left = 64
+          Height = 33
+          Top = 84
+          Width = 332
           TabOrder = 2
         end
         object Button4: TButton
-          Left = 279
-          Height = 25
-          Top = 56
-          Width = 33
+          Left = 418
+          Height = 38
+          Top = 84
+          Width = 50
           Caption = '...'
           OnClick = Button4Click
           TabOrder = 3
@@ -80,137 +81,137 @@ object Form1: TForm1
       end
       object GroupBox2: TGroupBox
         Left = 0
-        Height = 121
+        Height = 182
         Top = 0
-        Width = 336
+        Width = 504
         Caption = 'Benötigte informationen zum Starten des Webservers'
-        ClientHeight = 101
-        ClientWidth = 332
+        ClientHeight = 152
+        ClientWidth = 500
         TabOrder = 1
         object Label1: TLabel
-          Left = 8
-          Height = 15
+          Left = 12
+          Height = 25
           Top = 0
-          Width = 25
+          Width = 36
           Caption = 'Port:'
           ParentColor = False
         end
         object Edit1: TEdit
-          Left = 8
-          Height = 23
-          Top = 16
-          Width = 80
+          Left = 12
+          Height = 33
+          Top = 24
+          Width = 120
           TabOrder = 0
           Text = '80'
         end
         object Label2: TLabel
-          Left = 8
-          Height = 15
-          Top = 48
-          Width = 98
+          Left = 12
+          Height = 25
+          Top = 72
+          Width = 145
           Caption = 'Arbeitsverzeichnis:'
           ParentColor = False
         end
         object Edit2: TEdit
-          Left = 8
-          Height = 23
-          Top = 69
-          Width = 256
+          Left = 12
+          Height = 33
+          Top = 104
+          Width = 384
           TabOrder = 1
           Text = 'C:\Projekte\DELPHI\webserver test\'
         end
         object Button5: TButton
-          Left = 280
-          Height = 25
-          Top = 69
-          Width = 32
+          Left = 420
+          Height = 38
+          Top = 104
+          Width = 48
           Caption = '...'
           OnClick = Button5Click
           TabOrder = 2
         end
         object Label9: TLabel
-          Left = 152
-          Height = 15
+          Left = 228
+          Height = 25
           Top = 0
-          Width = 175
+          Width = 259
           Caption = 'Max. gleichzeitige Verbindungen:'
           ParentColor = False
         end
         object Edit4: TEdit
-          Left = 152
-          Height = 23
-          Top = 16
-          Width = 80
+          Left = 228
+          Height = 33
+          Top = 24
+          Width = 120
           TabOrder = 3
           Text = '20'
         end
       end
       object GroupBox3: TGroupBox
         Left = 0
-        Height = 113
-        Top = 240
-        Width = 336
+        Height = 170
+        Top = 360
+        Width = 504
         Caption = 'Bei Verzeichnis Aufruf ohne index.html (/index.htm)'
-        ClientHeight = 93
-        ClientWidth = 332
+        ClientHeight = 140
+        ClientWidth = 500
         TabOrder = 2
         object Label6: TLabel
-          Left = 8
-          Height = 15
+          Left = 12
+          Height = 25
           Top = 0
-          Width = 280
+          Width = 415
           Caption = 'Wenn der Client ein Verzeichnis im Arbeitsverzeichnis'
           ParentColor = False
         end
         object Label7: TLabel
-          Left = 8
-          Height = 15
-          Top = 16
-          Width = 280
+          Left = 12
+          Height = 25
+          Top = 24
+          Width = 412
           Caption = 'öffnet, in der keine index.html (bzw. index.htm) liegt,'
           ParentColor = False
         end
         object Label8: TLabel
-          Left = 8
-          Height = 15
-          Top = 32
-          Width = 284
+          Left = 12
+          Height = 25
+          Top = 48
+          Width = 422
           Caption = 'welche man anzeigen könnte, dann mache folgendes:'
           ParentColor = False
         end
         object RadioButton3: TRadioButton
-          Left = 16
-          Height = 19
-          Top = 48
-          Width = 122
+          Left = 24
+          Height = 29
+          Top = 72
+          Width = 188
           Caption = 'Error 404 Ausgeben'
           Checked = True
           TabOrder = 0
           TabStop = True
         end
         object RadioButton4: TRadioButton
-          Left = 15
-          Height = 19
-          Top = 64
-          Width = 317
+          Left = 22
+          Height = 29
+          Top = 96
+          Width = 471
           Caption = 'Dateiinhalt des Verzeichnisses übermitteln  (FTP Ansicht)'
           TabOrder = 1
         end
       end
       object Button1: TButton
-        Left = 56
-        Height = 25
-        Top = 368
-        Width = 75
+        Left = 84
+        Height = 38
+        Top = 552
+        Width = 112
         Caption = 'Start'
         OnClick = Button1Click
         TabOrder = 3
       end
       object Button2: TButton
-        Left = 184
-        Height = 25
-        Top = 368
-        Width = 75
+        Left = 276
+        Height = 38
+        Top = 552
+        Width = 112
         Caption = 'Stop'
         OnClick = Button2Click
         TabOrder = 4
@@ -218,21 +219,21 @@ object Form1: TForm1
     end
     object TabSheet2: TTabSheet
       Caption = 'Server Anfragen Anzeigen'
-      ClientHeight = 412
-      ClientWidth = 336
+      ClientHeight = 622
+      ClientWidth = 508
       object Label4: TLabel
         Left = 0
-        Height = 15
+        Height = 25
         Top = 0
-        Width = 87
+        Width = 131
         Caption = 'Server Anfragen:'
         ParentColor = False
       end
       object Memo1: TMemo
         Left = 0
-        Height = 386
-        Top = 16
-        Width = 328
+        Height = 579
+        Top = 24
+        Width = 492
         Color = cl3DLight
         ReadOnly = True
         ScrollBars = ssBoth
@@ -242,39 +243,39 @@ object Form1: TForm1
     end
   end
   object Label3: TLabel
-    Left = 200
-    Height = 15
-    Top = 466
-    Width = 34
+    Left = 300
+    Height = 25
+    Top = 699
+    Width = 51
     Caption = 'Label3'
     ParentColor = False
   end
   object Button3: TButton
-    Left = 240
-    Height = 25
-    Top = 456
-    Width = 75
+    Left = 360
+    Height = 38
+    Top = 684
+    Width = 112
     Caption = 'Button3'
     TabOrder = 1
   end
   object StatusBar1: TStatusBar
     Left = 0
-    Height = 23
-    Top = 517
-    Width = 348
+    Height = 36
+    Top = 787
+    Width = 522
     Panels = <    
       item
         Width = 0
       end    
       item
         Text = 'dddddddddd, dd. mmmmmmmmm yyyy - hh:nn:ss'
-        Width = 50
+        Width = 75
       end>
     SimplePanel = False
   end
   object MainMenu1: TMainMenu
-    left = 24
-    top = 456
+    Left = 36
+    Top = 684
     object Datei1: TMenuItem
       Caption = 'Datei'
       object Systray: TMenuItem
@@ -303,12 +304,12 @@ object Form1: TForm1
     end
   end
   object OpenDialog1: TOpenDialog
-    left = 112
-    top = 456
+    Left = 168
+    Top = 684
   end
   object PopupMenu1: TPopupMenu
-    left = 72
-    top = 456
+    Left = 108
+    Top = 684
     object Programm: TMenuItem
       Caption = 'Programm'
       OnClick = ProgrammClick
@@ -323,7 +324,7 @@ object Form1: TForm1
   end
   object Timer1: TTimer
     OnTimer = Timer1Timer
-    left = 152
-    top = 456
+    Left = 228
+    Top = 684
   end
 end

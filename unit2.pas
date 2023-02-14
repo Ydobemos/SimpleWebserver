@@ -34,6 +34,7 @@ type
     Label9: TLabel;
     procedure Button1Click(Sender: TObject);
     procedure FormMouseMove(Sender: TObject; Shift: TShiftState; X, Y: Integer);
+    procedure My_Github_urlClick(Sender: TObject);
     procedure My_Github_urlMouseMove(Sender: TObject; Shift: TShiftState; X,
       Y: Integer);
     procedure soenke_urlClick(Sender: TObject);
@@ -88,6 +89,11 @@ procedure TForm2.FormMouseMove(Sender: TObject; Shift: TShiftState; X,
 begin
   soenke_url.font.Color := clblue;
   My_Github_url.Font.color := clblue;
+end;
+
+procedure TForm2.My_Github_urlClick(Sender: TObject);
+begin
+  openUrl_inBrowser('https://github.com/Ydobemos/SimpleWebserver');
 end;
 
 procedure TForm2.Button1Click(Sender: TObject);

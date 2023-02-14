@@ -129,7 +129,7 @@ type
 var
   Form1: TForm1;
   IdTCPServer : TIdTCPServer;
-  Version : String = '1.7';
+  Version : String = '1.71';
   Path_delimiter_OS : String;
 
 implementation
@@ -372,7 +372,7 @@ begin
              {$IFDEF UNIX}        //Wenn Linux / Unix / ...
                      Form1.ClientHeight:=600;
              {$ELSE}              //Ansonsten Windows:
-                    Form1.ClientHeight:=485;
+                    Form1.ClientHeight:=725;//485;
              {$ENDIF}
 
      {$ELSE}					  //Ansonsten Delphi
@@ -837,15 +837,15 @@ begin
 
   if form1.RadioButton1.Checked=True then
   begin
-    sendErrPage :=   '<html> <head> ' +
+    sendErrPage :=   '<!DOCTYPE html><html> <head> ' +
                      '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'+
                      '<title>ERROR 404 - Seite nicht gefunden</title></head>'+
                      '<p>ERROR 404 - Seite nicht gefunden! </p>'+                //<br><br><br><br><br>'+  //+#13+#10+
                      '<div style="position:absolute; bottom:0px;left:17px; width: 95%;"><hr>'+
-                      '<address>Simple Webserver '+Version+' programmed by <a href="https://www.soenke-berlin.de">S&ouml;nke Schmidt</a></address>'+ //Das ö bei Sönke durch &ouml; ersetzen
-                      '</html>';
+                     '<address>Simple Webserver '+Version+' programmed by <a href="https://www.soenke-berlin.de">S&ouml;nke Schmidt</a></address>'+ //Das ö bei Sönke durch &ouml; ersetzen
+                     '</div></html>';
 
-    sendError:='HTTP/1.0 200 OK'+#13+#10+
+    sendError:='HTTP/1.0 404 Not Found'+#13+#10+
            'Date: '+DatumUndZeit+' GMT'+#13+#10+  //lol, 18 SoP 2008 '+TimetoStr(Time)+' GMT'+#13+#10+
            'Server: Soenkes Simple Webserver '+Version+#13+#10+
            'Last-Modified: Thu, 22 Apr 2021 16:37:24 GMT'+#13+#10+    //Könnte man auch rausnehmen. Kann es aber für einige Webbrowser einfacher machen und Inhalt ggf aus den Cach nehmen.
@@ -867,7 +867,7 @@ begin
        AContext.Connection.IOHandler.Close;
     end;
 
-    strForMemo := Timetostr(now)+' Verbindung mit: IP '+ fromIp + ' und Port: '+ IntToStr(PeerPort) + #13+#10;
+    strForMemo := DatetoStr(now) + ' - ' + Timetostr(now)+' Verbindung mit: IP '+ fromIp + ' und Port: '+ IntToStr(PeerPort) + #13+#10;
     strForMemo :=  strForMemo +'Folgende Datei wurde nicht gefunden:' +#13+#10;
     strForMemo :=  strForMemo + form1.Edit2.text+RequestedFile +#13+#10;
     strForMemo :=  strForMemo + 'Standard Error 404 wurde gesendet.' +#13+#10;
@@ -884,7 +884,7 @@ begin
 
     laenge:=FileStream.Size;
 
-    sendError:='HTTP/1.0 200 OK'+#13+#10+
+    sendError:='HTTP/1.0 404 Not Found'+#13+#10+
            'Date: '+DatumUndZeit+' GMT'+#13+#10+
            'Server: Soenkes Simple Webserver '+Version+#13+#10+
            'Last-Modified: Thu, 22 Jan 2008 16:37:24 GMT'+#13+#10+
@@ -907,7 +907,7 @@ begin
     end;
 
 
-    strForMemo := Timetostr(now)+' Verbindung mit: IP '+ fromIp + ' und Port: '+ IntToStr(PeerPort) + #13+#10;
+    strForMemo := DatetoStr(now) + ' - ' + Timetostr(now)+' Verbindung mit: IP '+ fromIp + ' und Port: '+ IntToStr(PeerPort) + #13+#10;
     strForMemo :=  strForMemo +'Folgende Datei wurde nicht gefunden:' +#13+#10;
     strForMemo :=  strForMemo + form1.Edit2.text+RequestedFile +#13+#10;
     strForMemo :=  strForMemo + '"'+form1.Edit3.text+'"'+' wurde als Error 404 gesendet' +#13+#10;
@@ -1058,7 +1058,7 @@ begin
         fileList.Sorted := True;
 
 	Liste.clear;
-	Liste.Add('<html><head>'+
+	Liste.Add('<!DOCTYPE html><html><head>'+
                   '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />' +
                   '<title>Index of '+temppfad+'</title></head><body>'+
 		  '<h1>Index of '+temppfad+'</h1>');
@@ -1090,16 +1090,19 @@ begin
 
 
         laenge:= 0;
-        for i:=0 to Liste.count-1 do
-        begin
-             laenge:=laenge+length(Liste[i]);
-        end;
+        //for i:=0 to Liste.count-1 do
+        //begin
+        //     laenge:=laenge+length(Liste[i]);
+        //end;
         //in laenge ist nun die länge ^^
 
         //Die Länge ist nicht gleich, darum mit for i:=0 to Liste.count-1 do
         //anstatt length(Liste.text)
         //showmessage('for i='+ IntToStr(laenge) + 'count: '+IntToStr(length(Liste.text)) );
-
+        //Unterschiedliche länge, weil die Umbrüche (\r\n) in der For-Schleife nicht mitgezählt werden,
+        //sind aber wichtig mit zu zählen! Darum nicht pro Zeile auslesen, sondern die gesamte Textlänge,
+        //da ja auch der gesamte Text gesendet wird!
+        laenge := length(Liste.text);
 
         send:='HTTP/1.0 200 OK'+#13+#10+
               'Date: '+DatumUndZeit+' GMT'+#13+#10+
@@ -1117,7 +1120,7 @@ begin
            AContext.Connection.IOHandler.Close;
         end;
 
-        strForMemo := Timetostr(now)+' Verbindung mit: IP '+ fromIp + ' und Port: '+ IntToStr(PeerPort) + #13+#10;
+        strForMemo := DatetoStr(now) + ' - ' + Timetostr(now)+' Verbindung mit: IP '+ fromIp + ' und Port: '+ IntToStr(PeerPort) + #13+#10;
         strForMemo := strForMemo +' Folgendes Unterverzeichnis wurde in FTP Ansicht übertragen:' +#13+#10;
         strForMemo :=  strForMemo + temppfad +#13+#10;
         strForMemo :=  strForMemo +  '---------------------------------------------------------------------------------'+#13+#10 + #13+#10;
@@ -1234,7 +1237,7 @@ begin
           DatumUndZeit:=FormatDateTime('dddd, d. mmmm yyyy hh:nn', Now);
           AContext.Connection.IOHandler.DefStringEncoding := IndyTextEncoding_UTF8;   //Direkt auf utf8 stellen, damit ich es später nicht immer wieder machen muss...
 
-          strForMemo := Timetostr(now)+' Verbindung mit: IP '+ fromIp + ' und Port: '+ fromPort + #13+#10;
+          strForMemo := DatetoStr(now) + ' - ' + Timetostr(now)+' Verbindung mit: IP '+ fromIp + ' und Port: '+ fromPort + #13+#10;
           strForMemo :=  strForMemo + 'HTTP-Request:' +#13+#10 + #13+#10;   ;
           strForMemo :=  strForMemo +  Text ;
           DisplayOnMemo(strForMemo);
@@ -1393,7 +1396,7 @@ begin
                          except
                                on e: Exception do
                                Begin
-                                    strForMemo := Timetostr(now)+' Verbindung mit: IP '+ fromIp + ' und Port: '+ fromPort + #13+#10;
+                                    strForMemo := DatetoStr(now) + ' - ' + Timetostr(now)+' Verbindung mit: IP '+ fromIp + ' und Port: '+ fromPort + #13+#10;
                                     strForMemo := strForMemo + 'Möglicher Verbindungsabbruch des Clienten/Browsers. Z.B. Abbruch eines Downloads...' +#13+#10;
                                     strForMemo :=  strForMemo + 'Ansonsten ist irgendetwas schief gegangen bei:' +#13+#10;
                                     strForMemo :=  strForMemo + Edit2.text+RequestedFile +#13+#10;
@@ -1407,7 +1410,7 @@ begin
                                AContext.Connection.IOHandler.Close;
                       end;
 
-                      strForMemo := Timetostr(now)+' Verbindung mit: IP '+ fromIp + ' und Port: '+ fromPort + #13+#10;
+                      strForMemo := DatetoStr(now) + ' - ' + Timetostr(now)+' Verbindung mit: IP '+ fromIp + ' und Port: '+ fromPort + #13+#10;
                       strForMemo := strForMemo + 'Folgende Datei gesendet:' +#13+#10;
                       strForMemo :=  strForMemo + Edit2.text+RequestedFile +#13+#10;
                       strForMemo :=  strForMemo +  '---------------------------------------------------------------------------------'+#13+#10 +#13+#10;

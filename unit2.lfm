@@ -1,20 +1,21 @@
 object Form2: TForm2
-  Left = 1645
-  Height = 372
-  Top = 165
-  Width = 206
+  Left = 1275
+  Height = 558
+  Top = 172
+  Width = 469
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Form2'
-  ClientHeight = 372
-  ClientWidth = 206
+  ClientHeight = 558
+  ClientWidth = 469
+  DesignTimePPI = 144
   OnMouseMove = FormMouseMove
-  LCLVersion = '2.0.6.0'
+  LCLVersion = '2.2.4.0'
   object Image1: TImage
-    Left = 8
-    Height = 48
-    Top = 40
-    Width = 48
+    Left = 12
+    Height = 72
+    Top = 60
+    Width = 72
     Picture.Data = {
       055449636F6EBE1C00000000010001003030000000000000A81C000016000000
       2800000030000000600000000100180000000000801C00000000000000000000
@@ -250,69 +251,69 @@ object Form2: TForm2
     }
   end
   object Label1: TLabel
-    Left = 24
-    Height = 25
-    Top = 8
-    Width = 151
+    Left = 36
+    Height = 40
+    Top = 12
+    Width = 228
     Caption = 'Simple Webserver'
-    Font.Height = -19
+    Font.Height = -29
     ParentColor = False
     ParentFont = False
   end
   object Label2: TLabel
-    Left = 72
-    Height = 15
-    Top = 48
-    Width = 41
+    Left = 108
+    Height = 25
+    Top = 72
+    Width = 62
     Caption = 'Version:'
     ParentColor = False
   end
   object Label3: TLabel
-    Left = 120
-    Height = 15
-    Top = 48
-    Width = 15
+    Left = 180
+    Height = 25
+    Top = 72
+    Width = 24
     Caption = '1.7'
     ParentColor = False
   end
   object Label4: TLabel
-    Left = 24
-    Height = 15
-    Top = 112
-    Width = 151
+    Left = 36
+    Height = 25
+    Top = 168
+    Width = 228
     Caption = 'Copyright by Sönke Schmidt'
     ParentColor = False
   end
   object Label5: TLabel
-    Left = 25
-    Height = 15
-    Top = 136
-    Width = 158
+    Left = 38
+    Height = 25
+    Top = 204
+    Width = 239
     Caption = 'Dieses Programm ist Freeware'
     ParentColor = False
   end
   object Label6: TLabel
-    Left = 25
-    Height = 15
-    Top = 158
-    Width = 93
+    Left = 38
+    Height = 25
+    Top = 237
+    Width = 140
     Caption = 'und open Source.'
     ParentColor = False
   end
   object Label7: TLabel
-    Left = 25
-    Height = 15
-    Top = 192
-    Width = 98
+    Left = 38
+    Height = 25
+    Top = 288
+    Width = 146
     Caption = 'Meine Homepage:'
     ParentColor = False
   end
   object soenke_url: TLabel
     Cursor = crHandPoint
-    Left = 24
-    Height = 15
-    Top = 216
-    Width = 158
+    Left = 36
+    Height = 25
+    Top = 324
+    Width = 233
     Caption = 'https://www.soenke-berlin.de'
     Font.Color = clBlue
     ParentColor = False
@@ -321,30 +322,31 @@ object Form2: TForm2
     OnMouseMove = soenke_urlMouseMove
   end
   object Label9: TLabel
-    Left = 26
-    Height = 15
-    Top = 250
-    Width = 141
+    Left = 39
+    Height = 25
+    Top = 375
+    Width = 213
     Caption = 'GitHub Seite des Projektes:'
     ParentColor = False
   end
   object My_Github_url: TLabel
     Cursor = crHandPoint
-    Left = 27
-    Height = 15
-    Top = 280
-    Width = 99
-    Caption = 'Will be announced'
+    Left = 40
+    Height = 25
+    Top = 420
+    Width = 386
+    Caption = 'https://github.com/Ydobemos/SimpleWebserver'
     Font.Color = clBlue
     ParentColor = False
     ParentFont = False
+    OnClick = My_Github_urlClick
     OnMouseMove = My_Github_urlMouseMove
   end
   object Button1: TButton
-    Left = 60
-    Height = 25
-    Top = 320
-    Width = 75
+    Left = 200
+    Height = 38
+    Top = 480
+    Width = 112
     Caption = 'OK'
     OnClick = Button1Click
     TabOrder = 0
