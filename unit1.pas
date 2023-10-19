@@ -23,10 +23,6 @@ uses
   MyContentTypeFinder;
    //Crt;
 
- {$IFNDEF FPC}
- const WM_TASKBAREVENT = WM_USER+1;
- {$ENDIF}
-
 //ggf: ScktComp,  FileCtrl, Menus;
 
 type
@@ -120,12 +116,7 @@ type
   public
         {$IFDEF FPC}
          procedure WriteAsyncQueue(Data: PtrInt);
-         {$ENDIF}
-
-         {$IFNDEF FPC}
-         procedure WMTASKBAREVENT(var message: TMessage); message WM_TASKBAREVENT;
-	 {$ENDIF}
-
+        {$ENDIF}
   end;
 
 var
@@ -434,30 +425,14 @@ Ab hier beginnt das SysTray!!!
 ////////////////////////////////////////////////////////////////////////////////
 }
 
-//unter uses noch hinzufügen: const WM_TASKBAREVENT = WM_USER+1;
-//unter   public  { Public-Deklarationen }
-//noch hinzufügen:
-// procedure WMTASKBAREVENT(var message: TMessage); message WM_TASKBAREVENT;
-//noch hinzufügen der shellapi bei: implementation uses shellapi;
 {$IFNDEF FPC}
-
-procedure TaskBarRemoveIcon;
-var tnid : TNOTIFYICONDATA ;
-begin
-    tnid.cbSize := sizeof(TNOTIFYICONDATA);
-    tnid.Wnd := Form1.handle;
-    tnid.uID := 1;
-    Shell_NotifyIcon(NIM_DELETE, @tnid);
-end;
-
-
-procedure TForm1.WMTASKBAREVENT(var message: TMessage);
+class procedure TForm1.WMTASKBAREVENT(var message: TMessage);
 var point : TPoint;
 begin
     case message.LParamLo of
          WM_LBUTTONDBLCLK : begin
                                  form1.show;
-                                 TaskBarRemoveIcon;
+                                 SystrayClass.TaskBarRemoveIcon;
                             end;
          WM_RBUTTONDOWN   : begin
                                  GetCursorPos(point);
@@ -465,29 +440,12 @@ begin
                             end;
     end;
 end;
-
-procedure TaskBarAddIcon;
-var tnid : TNOTIFYICONDATA ;
-begin
-    tnid.cbSize := sizeof(TNOTIFYICONDATA); // Größenangabe der Struktur
-    tnid.Wnd := Form1.handle;               // Handle des Message-Empfängers
-    tnid.uID := 1;                          // ID beliebig
-    tnid.uFlags := NIF_MESSAGE or NIF_ICON or NIF_TIP;  // siehe Tabelle
-    tnid.uCallbackMessage := WM_TASKBAREVENT;        // Message# für Form1
-    tnid.hIcon := form2.image1.picture.icon.handle;  // Iconhandle
-    strcopy(tnid.szTip,'Simple Webserver');                // Tooltiptext
-    Shell_NotifyIcon(NIM_ADD, @tnid);                // Registrieren ...
-end;
 {$ENDIF}
-
-
-
-
 
 procedure TForm1.ProgrammClick(Sender: TObject);
 begin
   {$IFNDEF FPC}
-        TaskBarRemoveIcon;
+        SystrayClass.TaskBarRemoveIcon;
         Form1.show;
   {$ENDIF}
 end;
@@ -496,7 +454,7 @@ end;
 procedure TForm1.Beenden2Click(Sender: TObject);
 begin
   {$IFNDEF FPC}
- 	TaskBarRemoveIcon;   //könnte man auch im Form1.close machen..
+ 	SystrayClass.TaskBarRemoveIcon;   //könnte man auch im Form1.close machen..
 	Form1.Close;
   {$ENDIF}
 end;
@@ -512,7 +470,7 @@ begin
                  'hat keinerlei Auswirkungen auf die Funktionalität des Webservers und ist nur ein zusätzliches Feature!');
      {$ELSE}
      self.hide;
-     TaskBarAddIcon;
+     SystrayClass.TaskBarAddIcon;
      {$ENDIF}
 
 end;
