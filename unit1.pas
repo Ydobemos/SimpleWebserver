@@ -19,8 +19,10 @@ uses
   //Indy 10 Stuff:
    IdContext, IdComponent, IdBaseComponent, IdCustomTCPServer, IdThreadSafe,
    IdTCPConnection, IdYarn, IdTCPServer, IdGlobal, IdURI,
-  //Unsere Klasse für den ContentType Finder:
-  MyContentTypeFinder;
+  //My Class for the ContentType Finder:
+  MyContentTypeFinder,
+  //My Class for the Systray:
+  MySystray;
    //Crt;
 
 //ggf: ScktComp,  FileCtrl, Menus;
@@ -89,6 +91,7 @@ type
     procedure Button2Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure Hilfe1Click(Sender: TObject);
     procedure Info2Click(Sender: TObject);
@@ -124,6 +127,7 @@ var
   IdTCPServer : TIdTCPServer;
   Version : String = '1.71';
   Path_delimiter_OS : String;
+  MySystrayClass : SystrayClass;
 
 implementation
 
@@ -317,6 +321,11 @@ begin
 	edit2.Text:=pfad;
 end;
 
+procedure TForm1.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
+ MySystrayClass.Free;
+end;
+
 
 
 procedure TForm1.FormCreate(Sender: TObject);
@@ -384,6 +393,12 @@ begin
         //Die Sachen für "Eigene definierte 404 (html) Seite verwenden:" deaktivieren:
         Edit3.enabled := False;
         Button4.enabled := False;
+
+        //Systray initialisieren:
+        MySystrayClass := SystrayClass.create();
+        {$IFDEF FPC}
+        MySystrayClass.CreateSystrayStuffForFPC;
+        {$ENDIF}
 end;
 
 
@@ -422,6 +437,7 @@ end;
 {
 ////////////////////////////////////////////////////////////////////////////////
 Ab hier beginnt das SysTray!!!
+Überwiegend ausgelagert in die Klasse "MySystray"
 ////////////////////////////////////////////////////////////////////////////////
 }
 
@@ -432,7 +448,7 @@ begin
     case message.LParamLo of
          WM_LBUTTONDBLCLK : begin
                                  form1.show;
-                                 SystrayClass.TaskBarRemoveIcon;
+                                 MySystrayClass.TaskBarRemoveIcon;
                             end;
          WM_RBUTTONDOWN   : begin
                                  GetCursorPos(point);
@@ -444,35 +460,20 @@ end;
 
 procedure TForm1.ProgrammClick(Sender: TObject);
 begin
-  {$IFNDEF FPC}
-        SystrayClass.TaskBarRemoveIcon;
-        Form1.show;
-  {$ENDIF}
+   MySystrayClass.PopupMenuClickOnProgramm;
 end;
 
 
 procedure TForm1.Beenden2Click(Sender: TObject);
 begin
-  {$IFNDEF FPC}
- 	SystrayClass.TaskBarRemoveIcon;   //könnte man auch im Form1.close machen..
-	Form1.Close;
-  {$ENDIF}
+   MySystrayClass.PopupMenuClickOnBeenden;
 end;
 
 
 
 procedure TForm1.SystrayClick(Sender: TObject);
 begin
-     {$IFDEF FPC}
-     showmessage('Die Implementierung des Systrays für Free Pascal hat noch nicht begonnen.' +#13+#10+
-                 'Bisher gibt es nur eine Implementierung für Delphi, somit also für Windows.' +#13+#10+
-                 'Die Möglichkeit den Webserver in das Systray zu ziehen oder nicht, ' +
-                 'hat keinerlei Auswirkungen auf die Funktionalität des Webservers und ist nur ein zusätzliches Feature!');
-     {$ELSE}
-     self.hide;
-     SystrayClass.TaskBarAddIcon;
-     {$ENDIF}
-
+   MySystrayClass.SystrayClick;
 end;
 
 {

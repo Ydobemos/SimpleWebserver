@@ -5,7 +5,11 @@ unit MySystray;
 interface
 
 uses
-  Classes, SysUtils;
+  Classes, SysUtils
+  {$IFDEF FPC}
+   , ExtCtrls, Graphics ,  Dialogs, StdCtrls, Menus , Forms  , Controls
+  {$ENDIF}
+  ;
 
 {$IFNDEF FPC}
 const WM_TASKBAREVENT = WM_USER+1;
@@ -13,6 +17,7 @@ const WM_TASKBAREVENT = WM_USER+1;
 
 type
   SystrayClass = class
+  private
   public
     {$IFNDEF FPC}
      class procedure TaskBarAddIcon;
@@ -20,14 +25,30 @@ type
     {$ENDIF}
 
     {$IFNDEF FPC}
-             procedure WMTASKBAREVENT(var message: TMessage); message WM_TASKBAREVENT;
+     procedure WMTASKBAREVENT(var message: TMessage); message WM_TASKBAREVENT;
     {$ENDIF}
+
+    {$IFDEF FPC}
+     procedure CreateSystrayStuffForFPC;
+     procedure MinimizeToSystray;
+     procedure TheTrayIconClick(Sender: TObject);
+    {$ENDIF}
+
+     procedure PopupMenuClickOnProgramm;
+     procedure PopupMenuClickOnBeenden;
+     procedure SystrayClick;
 
   end;
 
+ {$IFDEF FPC}
+  var
+   TheTrayIcon : TTrayIcon;
+ {$ENDIF}
+
 implementation
-
-
+ {$IFDEF FPC}
+   uses Unit1;
+ {$ENDIF}
 
 //unter uses noch hinzufügen: const WM_TASKBAREVENT = WM_USER+1;
 //unter   public  { Public-Deklarationen }
@@ -61,7 +82,89 @@ end;
 
 
 
+ //Here the Systray Version for Lazarus / Free Pascal:
+{$IFDEF FPC}
+procedure SystrayClass.CreateSystrayStuffForFPC;
+var
+   MyIcon : TIcon;
+begin
+  TheTrayIcon := TTrayIcon.Create(nil);
+  TheTrayIcon.Icons  := TImageList.Create(nil);
+  MyIcon := Application.Icon;
+  TheTrayIcon.Icon.Assign(MyIcon);
+  TheTrayIcon.Icons.AddIcon(MyIcon);
 
+  TheTrayIcon.PopUpMenu :=  Form1.PopupMenu1;
+  TheTrayIcon.OnClick := TheTrayIconClick;
+end;
+
+procedure SystrayClass.TheTrayIconClick(Sender: TObject);
+begin
+   with form1 do
+   Begin
+        if WindowState = wsMinimized then
+        begin
+             WindowState := wsNormal;
+        end;
+        Show;
+   end;
+ TheTrayIcon.Visible := false;
+end;
+
+procedure SystrayClass.MinimizeToSystray;
+begin
+   with form1 do
+   Begin
+       WindowState:=wsMinimized;
+       Hide;
+   end;
+  TheTrayIcon.Visible:= true;
+end;
+{$ENDIF}
+
+
+procedure SystrayClass.PopupMenuClickOnProgramm;
+begin
+  {$IFNDEF FPC}
+    TaskBarRemoveIcon;
+    Form1.show;
+  {$ENDIF}
+
+  {$IFDEF FPC}
+  TheTrayIcon.Visible := false;
+  with form1 do
+  Begin
+       WindowState := wsNormal;
+       Show;
+       Application.BringToFront();
+  end;
+  {$ENDIF}
+end;
+
+
+
+procedure SystrayClass.PopupMenuClickOnBeenden;
+begin
+ {$IFNDEF FPC}
+    TaskBarRemoveIcon;   //könnte man auch im Form1.close machen..
+    Form1.Close;
+ {$ENDIF}
+
+ {$IFDEF FPC}
+    TheTrayIcon.Visible := false;
+    Form1.Close;
+{$ENDIF}
+end;
+
+procedure SystrayClass.SystrayClick;
+begin
+ {$IFDEF FPC}
+   MinimizeToSystray;
+ {$ELSE}
+ form1.self.hide;
+ TaskBarAddIcon;
+ {$ENDIF}
+end;
 
 end.
 
