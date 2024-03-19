@@ -1,7 +1,7 @@
 object Form1: TForm1
-  Left = 267
+  Left = 459
   Height = 853
-  Top = 104
+  Top = 94
   Width = 522
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
@@ -35,24 +35,24 @@ object Form1: TForm1
         ClientHeight = 129
         ClientWidth = 500
         TabOrder = 0
-        object RadioButton1: TRadioButton
+        object StandardErrorPageToSendRadioButton: TRadioButton
           Left = 24
           Height = 29
           Top = 24
           Width = 285
           Caption = 'Standard Error 404 Seite senden'
           Checked = True
-          OnClick = RadioButton1Click
+          OnClick = StandardErrorPageToSendRadioButtonClick
           TabOrder = 0
           TabStop = True
         end
-        object RadioButton2: TRadioButton
+        object OwnErorPageToSendRadioButton: TRadioButton
           Left = 24
           Height = 29
           Top = 48
           Width = 385
           Caption = 'Eigene definierte 404 (html) Seite verwenden:'
-          OnClick = RadioButton2Click
+          OnClick = OwnErorPageToSendRadioButtonClick
           TabOrder = 1
         end
         object Label5: TLabel
@@ -63,20 +63,20 @@ object Form1: TForm1
           Caption = 'Bei ungültigem Seiten aufruf:'
           ParentColor = False
         end
-        object Edit3: TEdit
+        object ErrorPagePathEdit: TEdit
           Left = 64
           Height = 33
           Top = 84
           Width = 332
           TabOrder = 2
         end
-        object Button4: TButton
+        object ErrorPagePathSelectButton: TButton
           Left = 418
           Height = 38
           Top = 84
           Width = 50
           Caption = '...'
-          OnClick = Button4Click
+          OnClick = ErrorPagePathSelectButtonClick
           TabOrder = 3
         end
       end
@@ -97,7 +97,7 @@ object Form1: TForm1
           Caption = 'Port:'
           ParentColor = False
         end
-        object Edit1: TEdit
+        object PortEdit: TEdit
           Left = 12
           Height = 33
           Top = 24
@@ -113,7 +113,7 @@ object Form1: TForm1
           Caption = 'Arbeitsverzeichnis:'
           ParentColor = False
         end
-        object Edit2: TEdit
+        object WorkingDirectoryEdit: TEdit
           Left = 12
           Height = 33
           Top = 104
@@ -121,13 +121,13 @@ object Form1: TForm1
           TabOrder = 1
           Text = 'C:\Projekte\DELPHI\webserver test\'
         end
-        object Button5: TButton
+        object WorkDirectorySelectButton: TButton
           Left = 420
           Height = 38
           Top = 104
           Width = 48
           Caption = '...'
-          OnClick = Button5Click
+          OnClick = WorkDirectorySelectButtonClick
           TabOrder = 2
         end
         object Label9: TLabel
@@ -138,7 +138,7 @@ object Form1: TForm1
           Caption = 'Max. gleichzeitige Verbindungen:'
           ParentColor = False
         end
-        object Edit4: TEdit
+        object MaxConnectionsEdit: TEdit
           Left = 228
           Height = 33
           Top = 24
@@ -180,7 +180,7 @@ object Form1: TForm1
           Caption = 'welche man anzeigen könnte, dann mache folgendes:'
           ParentColor = False
         end
-        object RadioButton3: TRadioButton
+        object SendErrorOnCleanPathRadioButton: TRadioButton
           Left = 24
           Height = 29
           Top = 72
@@ -190,7 +190,7 @@ object Form1: TForm1
           TabOrder = 0
           TabStop = True
         end
-        object RadioButton4: TRadioButton
+        object SendFtpViewRadioButton: TRadioButton
           Left = 22
           Height = 29
           Top = 96
@@ -199,22 +199,22 @@ object Form1: TForm1
           TabOrder = 1
         end
       end
-      object Button1: TButton
+      object StartButton: TButton
         Left = 84
         Height = 38
         Top = 552
         Width = 112
         Caption = 'Start'
-        OnClick = Button1Click
+        OnClick = StartButtonClick
         TabOrder = 3
       end
-      object Button2: TButton
+      object StopButton: TButton
         Left = 276
         Height = 38
         Top = 552
         Width = 112
         Caption = 'Stop'
-        OnClick = Button2Click
+        OnClick = StopButtonClick
         TabOrder = 4
       end
     end
@@ -254,7 +254,7 @@ object Form1: TForm1
   object Button3: TButton
     Left = 360
     Height = 38
-    Top = 684
+    Top = 680
     Width = 112
     Caption = 'Button3'
     TabOrder = 1

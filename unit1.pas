@@ -22,7 +22,9 @@ uses
   //My Class for the ContentType Finder:
   MyContentTypeFinder,
   //My Class for the Systray:
-  MySystray;
+  MySystray,
+  //My Singleton Class to Save all the Settings and make it available for everyone
+  ServerSettingsSingleton;
    //Crt;
 
 //ggf: ScktComp,  FileCtrl, Menus;
@@ -41,15 +43,15 @@ type
   { TForm1 }
 
   TForm1 = class(TForm)
-    Button1: TButton;
-    Button2: TButton;
+    StartButton: TButton;
+    StopButton: TButton;
     Button3: TButton;
-    Button4: TButton;
-    Button5: TButton;
-    Edit1: TEdit;
-    Edit2: TEdit;
-    Edit3: TEdit;
-    Edit4: TEdit;
+    ErrorPagePathSelectButton: TButton;
+    WorkDirectorySelectButton: TButton;
+    PortEdit: TEdit;
+    WorkingDirectoryEdit: TEdit;
+    ErrorPagePathEdit: TEdit;
+    MaxConnectionsEdit: TEdit;
     GroupBox1: TGroupBox;
     GroupBox2: TGroupBox;
     GroupBox3: TGroupBox;
@@ -70,10 +72,10 @@ type
     N1: TMenuItem;
     OpenDialog1: TOpenDialog;
     PopupMenu1: TPopupMenu;
-    RadioButton1: TRadioButton;
-    RadioButton2: TRadioButton;
-    RadioButton3: TRadioButton;
-    RadioButton4: TRadioButton;
+    StandardErrorPageToSendRadioButton: TRadioButton;
+    OwnErorPageToSendRadioButton: TRadioButton;
+    SendErrorOnCleanPathRadioButton: TRadioButton;
+    SendFtpViewRadioButton: TRadioButton;
     StatusBar1: TStatusBar;
     Systray: TMenuItem;
     Beenden: TMenuItem;
@@ -87,17 +89,17 @@ type
     TabSheet2: TTabSheet;
     procedure Beenden2Click(Sender: TObject);
     procedure BeendenClick(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
-    procedure Button2Click(Sender: TObject);
-    procedure Button4Click(Sender: TObject);
-    procedure Button5Click(Sender: TObject);
+    procedure StartButtonClick(Sender: TObject);
+    procedure StopButtonClick(Sender: TObject);
+    procedure ErrorPagePathSelectButtonClick(Sender: TObject);
+    procedure WorkDirectorySelectButtonClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure Hilfe1Click(Sender: TObject);
     procedure Info2Click(Sender: TObject);
     procedure ProgrammClick(Sender: TObject);
-    procedure RadioButton1Click(Sender: TObject);
-    procedure RadioButton2Click(Sender: TObject);
+    procedure StandardErrorPageToSendRadioButtonClick(Sender: TObject);
+    procedure OwnErorPageToSendRadioButtonClick(Sender: TObject);
     procedure SystrayClick(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
     //////My callback functions
@@ -112,6 +114,10 @@ type
     procedure ListFileDir(Path: string; FileList: TStrings);
     function pfadUrlEncoding (Path: string):String;
     function pfadUrlDecoding (Path: string):String;
+    function SaveServerSettingsToSingleton: Boolean;
+    procedure DeactivateTheVisualControlls;
+    procedure TryActivateServer;
+    procedure ResetServerStateVisuals;
   private
         {$IFDEF FPC}
         procedure WriteToMemo(const AMsg: string);
@@ -140,17 +146,11 @@ implementation
         Unit2;
 
 
-
-
   {$IFDEF FPC}
         {$R *.lfm}
   {$ELSE}
        {$R *.dfm}
   {$ENDIF}
-
-
-
-
 
 
 { TForm1 }
@@ -162,75 +162,115 @@ end;
 
 
 
-
-/////// Start - Button \\\\\\\
-procedure TForm1.Button1Click(Sender: TObject);
-var position:Integer;
-    text:String;
+function TForm1.SaveServerSettingsToSingleton: Boolean;
 begin
-  Button2.Enabled := True; //Stop-Button aktivierbar machen
+ Result := True;
+  TServerSettingsSingleton.Instance.WorkingDirectoryPath := WorkingDirectoryEdit.Text;
 
-  if edit2.text='' then
+  try
+    TServerSettingsSingleton.Instance.Port := StrToInt(PortEdit.text);
+  except
+      on e: Exception do
+      Begin
+         showmessage('Bitte einen gültigen Port eintragen! ' +#13+#10+#13+#10+
+          'Die Fehlermeldung lautet: ' +#13+#10+
+           e.Message );
+         Result := False;
+      end;
+  end;
+
+  try
+    TServerSettingsSingleton.Instance.MaxConnections := StrToInt(MaxConnectionsEdit.text);
+  except
+      on e: Exception do
+      Begin
+         showmessage('Bitte eine gültige Anzahl an maximalen Verbindungen eintragen! ' +#13+#10+#13+#10+
+          'Die Fehlermeldung lautet: ' +#13+#10+
+           e.Message );
+         Result := False;
+      end;
+  end;
+
+  TServerSettingsSingleton.Instance.SendIndividualErrorPage := OwnErorPageToSendRadioButton.checked;
+  if TServerSettingsSingleton.Instance.SendIndividualErrorPage = true then
+     TServerSettingsSingleton.Instance.IndividualErrorPagePath := ErrorPagePathEdit.text;
+
+  TServerSettingsSingleton.Instance.SendFtpLikeViewOnEmptyDir := SendFtpViewRadioButton.checked;
+end;
+
+
+
+function ValidateDirectory(const Dir: string): Boolean;
+begin
+  Result := True;
+  if Dir = '' then
   begin
     showmessage('Bitte wählen Sie das Arbeitsverzeichnis aus, in dem sich die Dateien befinden, die der Webserver verwenden soll');
-    exit;
-  end;
-
-  if not DirectoryExists(edit2.text) then
-  begin
+    Result := False;
+  end
+else
+if not DirectoryExists(Dir) then
+begin
     Showmessage('Das Arbeitsverzeichnis existiert garnicht ...'+#13+#10+'Bitte geben Sie ein korrektes Arbeitsverzeichnis an!');
-    exit;
+    Result := False;
   end;
+end;
 
 
 
+function ValidateErrorDirectory: Boolean;
+begin
+   Result := True;
   //Checken ob eigene definierte 404 (html) Seite verwendet wird:
-  if RadioButton2.checked=true then
+  if TServerSettingsSingleton.Instance.SendIndividualErrorPage then
   begin
-    if (edit3.text='') then
+    if (TServerSettingsSingleton.Instance.IndividualErrorPagePath = '') then
     begin
       showmessage('Bitte geben Sie auch eine Fehlerseite an oder wählen Sie "Standard Error 404 Seite senden" aus.');
-      exit;
+      Result := False;
     end;
 
-    if not fileexists(Edit3.text) then
+    if not fileexists(TServerSettingsSingleton.Instance.IndividualErrorPagePath) then
     begin
       Showmessage('Ihre Fehlerseite existiert nicht, bitte geben Sie eine existierende Fehlerseite an!');
-      exit;
+      Result := False;
     end;
-
   end;
-
-
-  /////überprüfen ob letztes zeichen ein '/' ist
-  position :=length(edit2.Text);
-  text := edit2.Text;
-  text := Copy(text, position,1 ); //von der vorletzten position einen Char kopieren
-
-  //if not pos(Path_delimiter_OS,text) = 1 then     //so geht das nicht...
-  if pos(Path_delimiter_OS,text) <> 1 then          //Bei 1 hätte er ein "\" am Ende gefunden! Da er es nicht gefunden hat, ergänzen wir es!
-  begin
-    edit2.Text := Edit2.Text+Path_delimiter_OS;       //ein "\" ergänzen um Pfad richtig zu öffnen
-  end;
+end;
 
 
 
-  {
-  if not pos('\',text) = 1 then
-  begin
-    edit2.Text := Edit2.Text+'\';       //ein "\" ergänzen um Pfad richtig zu öffnen
-  end;
-   }
+procedure TForm1.DeactivateTheVisualControlls;
+begin
+   //Arbeitsverzeichnis, Port etc. kann während des Starts nicht mehr geändert werden!
+   WorkingDirectoryEdit.Enabled := False;
+   WorkDirectorySelectButton.Enabled := False;
+   PortEdit.Enabled := False;
+   MaxConnectionsEdit.Enabled := False;
+   StartButton.Enabled := False;
+end;
 
 
 
-////////////////
-  // clearing the bindings property (socket handles )
+procedure EnsureTrailingPathDelimiter;
+var path:String;
+begin
+  path := TServerSettingsSingleton.Instance.WorkingDirectoryPath;
+  if not Path.EndsWith(Path_delimiter_OS) then
+     TServerSettingsSingleton.Instance.WorkingDirectoryPath := Path + Path_delimiter_OS;
+end;
+
+
+
+procedure TForm1.TryActivateServer;
+begin
+
+ // clearing the bindings property (socket handles )
   IdTCPServer.Bindings.Clear;
 
   try
     // Port hinzufügen:
-    IdTCPServer.Bindings.Add.Port := strtoint(edit1.Text);
+    IdTCPServer.Bindings.Add.Port := TServerSettingsSingleton.Instance.Port;
   except
     showmessage('Bitte einen gültigen Port eintragen!');
     exit;
@@ -239,22 +279,17 @@ begin
 
   try
     // MaxConnections hinzufügen:
-    IdTCPServer.MaxConnections  := strtoint(edit4.Text);
+    IdTCPServer.MaxConnections  := TServerSettingsSingleton.Instance.MaxConnections;
   except
     showmessage('Bitte eine gültige Anzahl an maximalen Verbindungen eintragen!');
     exit;
   end;
 
 
+  DeactivateTheVisualControlls;
 
-   //Arbeitsverzeichnis und Port während des Starts kann nicht mehr geändert werden!
-   Edit2.Enabled := False;
-   Button5.Enabled := False;
-   Edit1.Enabled := False;
-   Button1.Enabled := False;
-   Edit4.Enabled := False;
 
-   //Ein aktives binding auf IPv4 ist gerade nicht nötig. Kann man aber mal im Hinterkopf behalten:
+//Ein aktives binding auf IPv4 ist gerade nicht nötig. Kann man aber mal im Hinterkopf behalten:
    //IdTCPServer.Bindings.Items[0].IPVersion := Id_IPv4 ;
 
    try
@@ -267,40 +302,58 @@ begin
                       'Probieren Sie mal Port 8080 oder Port 8083 aus.'  +#13+#10 +#13+#10+
                       'Ansonsten lautet die Fehlermeldung: ' +#13+#10+
                       e.Message );
-          Button2.Click;  //Den "Stop" Button drücken und somit alles wieder zurücksetzen!
+          ResetServerStateVisuals;
       end;
-
    end;
 
-
-
-
 end;
 
-procedure TForm1.Button2Click(Sender: TObject);
+
+
+procedure TForm1.ResetServerStateVisuals;
+begin
+  StopButton.Click; //Den "Stop" Button drücken und somit alle Visuellen Komponenten wieder zurücksetzen!
+end;
+
+
+
+/////// Start - Button \\\\\\\
+procedure TForm1.StartButtonClick(Sender: TObject);
+var position:Integer;
+    text:String;
+begin
+  if not SaveServerSettingsToSingleton then Exit;
+
+  StopButton.Enabled := True; //Stop-Button aktivierbar machen
+
+  if not ValidateDirectory(TServerSettingsSingleton.Instance.WorkingDirectoryPath) then Exit;
+  if not ValidateErrorDirectory then Exit;
+
+
+  EnsureTrailingPathDelimiter;
+  //Falls ein delemiter am Ende geschrieben wurde schreiben wir es zurück, damit es angezeigt wird: (ist nur visuel und daher eigentlich optional)
+  WorkingDirectoryEdit.Text := TServerSettingsSingleton.Instance.WorkingDirectoryPath;
+
+  TryActivateServer;
+end;
+
+
+
+procedure TForm1.StopButtonClick(Sender: TObject);
 begin
    IdTCPServer.Active := False;  //Server wird gestoppt
-   //Arbeitsverzeichnis und Port wieder aktivieren, damit sie geändert werden können
-   Edit2.Enabled := True;
-   Button5.Enabled := True;
-   Edit1.Enabled := True;
-   Button1.Enabled := True;
-   Button2.Enabled := False;
-   Edit4.Enabled := True;
+   //Arbeitsverzeichnis, Port etc. wieder aktivieren, damit sie geändert werden können
+   WorkingDirectoryEdit.Enabled := True;
+   WorkDirectorySelectButton.Enabled := True;
+   PortEdit.Enabled := True;
+   MaxConnectionsEdit.Enabled := True;
+   StartButton.Enabled := True;
+   StopButton.Enabled := False;
 end;
 
 
 
-
-
-
-
-
-
-
-
-
-procedure TForm1.Button4Click(Sender: TObject);
+procedure TForm1.ErrorPagePathSelectButtonClick(Sender: TObject);
 begin
      OpenDialog1.Filename:='';
      //  OpenDialog1.Filter:='HTML-Dateien (*html & *htm)|*.htm;*.html;*.HTML;*.HTM';
@@ -308,18 +361,22 @@ begin
 
      if OpenDialog1.Execute then
      begin
-          Edit3.text:=(OpenDialog1.Filename);
+          ErrorPagePathEdit.text:=(OpenDialog1.Filename);
      end;
 
 end;
 
-procedure TForm1.Button5Click(Sender: TObject);
+
+
+procedure TForm1.WorkDirectorySelectButtonClick(Sender: TObject);
 var Pfad:String;
 begin
 //uses FileCtrl;
 	SelectDirectory('Ordner auswählen', '' ,Pfad);
-	edit2.Text:=pfad;
+	WorkingDirectoryEdit.Text:=pfad;
 end;
+
+
 
 procedure TForm1.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
@@ -384,15 +441,15 @@ begin
 
 
 	pfad := ExtractFilePath(Application.ExeName); // der Pfad
-	Edit2.Text:=pfad;  //den aktuellen pfad wo sich der webserver befindet (gestartet wurde) als standard start verzeichnis verwenden
+	WorkingDirectoryEdit.Text:=pfad;  //den aktuellen pfad wo sich der webserver befindet (gestartet wurde) als standard start verzeichnis verwenden
 
 	StatusBar1.Panels[1].text := FormatDateTime('dddd, d. mmmm yyyy - hh:nn', Now) + ' Uhr';
 	Form1.caption:= 'Simple Webserver '+Version+' von Sönke Schmidt';
-        Button2.Enabled := False;
+        StopButton.Enabled := False;
 
         //Die Sachen für "Eigene definierte 404 (html) Seite verwenden:" deaktivieren:
-        Edit3.enabled := False;
-        Button4.enabled := False;
+        ErrorPagePathEdit.enabled := False;
+        ErrorPagePathSelectButton.enabled := False;
 
         //Systray initialisieren:
         MySystrayClass := SystrayClass.create();
@@ -402,10 +459,13 @@ begin
 end;
 
 
+
 procedure TForm1.Hilfe1Click(Sender: TObject);
 begin
   showmessage('Gerade keine Lust eine Hilfe zu schreiben :P'+#10+#13+'Vielleicht kommt noch eine Hilfe, aber ich denke es müsste alles verständlich sein.');
 end;
+
+
 
 procedure TForm1.Info2Click(Sender: TObject);
 begin
@@ -416,16 +476,18 @@ end;
 
 
 
-procedure TForm1.RadioButton1Click(Sender: TObject);
+procedure TForm1.StandardErrorPageToSendRadioButtonClick(Sender: TObject);
 begin
-     Edit3.enabled := False;
-     Button4.enabled := False;
+     ErrorPagePathEdit.enabled := False;
+     ErrorPagePathSelectButton.enabled := False;
 end;
 
-procedure TForm1.RadioButton2Click(Sender: TObject);
+
+
+procedure TForm1.OwnErorPageToSendRadioButtonClick(Sender: TObject);
 begin
-     Edit3.enabled := True;
-     Button4.enabled := True;
+     ErrorPagePathEdit.enabled := True;
+     ErrorPagePathSelectButton.enabled := True;
 end;
 
 
@@ -570,7 +632,7 @@ begin
   fromIp    := AContext.Binding.PeerIP;
   peerPort  := AContext.Binding.PeerPort;
 
-  if form1.RadioButton1.Checked=True then
+  if form1.StandardErrorPageToSendRadioButton.Checked=True then
   begin
     sendErrPage :=   '<!DOCTYPE html><html> <head> ' +
                      '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />'+
@@ -604,7 +666,7 @@ begin
 
     strForMemo := DatetoStr(now) + ' - ' + Timetostr(now)+' Verbindung mit: IP '+ fromIp + ' und Port: '+ IntToStr(PeerPort) + #13+#10;
     strForMemo :=  strForMemo +'Folgende Datei wurde nicht gefunden:' +#13+#10;
-    strForMemo :=  strForMemo + form1.Edit2.text+RequestedFile +#13+#10;
+    strForMemo :=  strForMemo + form1.WorkingDirectoryEdit.text+RequestedFile +#13+#10;
     strForMemo :=  strForMemo + 'Standard Error 404 wurde gesendet.' +#13+#10;
     strForMemo :=  strForMemo +  '---------------------------------------------------------------------------------'+#13+#10 + #13+#10;
     DisplayOnMemo(strForMemo);
@@ -612,10 +674,10 @@ begin
 
 
 
-  if form1.RadioButton2.Checked=True then
+  if form1.OwnErorPageToSendRadioButton.Checked=True then
   begin
 
-    FileStream := TFileStream.Create(form1.Edit3.text, fmOpenRead or fmShareDenyNone );    //readonly status reicht aus ^^
+    FileStream := TFileStream.Create(form1.ErrorPagePathEdit.text, fmOpenRead or fmShareDenyNone );    //readonly status reicht aus ^^
 
     laenge:=FileStream.Size;
 
@@ -626,7 +688,7 @@ begin
            'Content-Length: '+inttostr(laenge) +#13+#10+
            'Connection: close' +#13+#10+
            //'Content-Type: text/html' +   ////WhatContenttype('index.txt')
-           'Content-Type: '+ ContentTypeFinder.WhatContenttype(form1.Edit3.text) +
+           'Content-Type: '+ ContentTypeFinder.WhatContenttype(form1.ErrorPagePathEdit.text) +
              #13+#10+ #13+#10;
 
     try
@@ -644,8 +706,8 @@ begin
 
     strForMemo := DatetoStr(now) + ' - ' + Timetostr(now)+' Verbindung mit: IP '+ fromIp + ' und Port: '+ IntToStr(PeerPort) + #13+#10;
     strForMemo :=  strForMemo +'Folgende Datei wurde nicht gefunden:' +#13+#10;
-    strForMemo :=  strForMemo + form1.Edit2.text+RequestedFile +#13+#10;
-    strForMemo :=  strForMemo + '"'+form1.Edit3.text+'"'+' wurde als Error 404 gesendet' +#13+#10;
+    strForMemo :=  strForMemo + form1.WorkingDirectoryEdit.text+RequestedFile +#13+#10;
+    strForMemo :=  strForMemo + '"'+form1.ErrorPagePathEdit.text+'"'+' wurde als Error 404 gesendet' +#13+#10;
     strForMemo :=  strForMemo +  '---------------------------------------------------------------------------------'+#13+#10 + #13+#10;
     DisplayOnMemo(strForMemo);
 
@@ -756,7 +818,7 @@ begin
         fromIp    := AContext.Binding.PeerIP;
         peerPort  := AContext.Binding.PeerPort;
 
-	temppfadInt:=length(path)-length(form1.edit2.text);
+	temppfadInt:=length(path)-length(form1.WorkingDirectoryEdit.text);
 
 	if temppfadint=0 then
 	begin
@@ -767,7 +829,7 @@ begin
 	     temppfad:=Path;
 
              //anfang löschen, so dass nur der bzw die Unterordner da steht
-             Delete(temppfad, 1, length(form1.Edit2.Text));
+             Delete(temppfad, 1, length(form1.WorkingDirectoryEdit.Text));
 
              //Path Delimiter für den Browser wieder umdrehen, falls es vorher für das OS (Windows) angepasst wurde:
              if AnsiPos('\',LowerCase(temppfad)) > 0 then
@@ -988,25 +1050,25 @@ begin
 	       if pos(' ',temp)=1 then  //== "GET / HTTP/1.1" oder so ähnlich  //Leerzeichen hiner /  -> root aufruf
 	       begin
 	            //Priorisierung: Erst html dann htm senden (Darum zuletzt html überprüfen, damit es das letzte und somit erste gewählte ist)
-		    if fileexists(Edit2.text+'index.htm') then
+		    if fileexists(WorkingDirectoryEdit.text+'index.htm') then
 		       RequestedFile:='index.htm';
 
-		    if fileexists(Edit2.text+'index.html') then
+		    if fileexists(WorkingDirectoryEdit.text+'index.html') then
 		       RequestedFile:='index.html';
 
 
-		    if (not fileexists(Edit2.text+'index.html')) and (not fileexists(Edit2.text+'index.htm')) then
+		    if (not fileexists(WorkingDirectoryEdit.text+'index.html')) and (not fileexists(WorkingDirectoryEdit.text+'index.htm')) then
 		    begin
 
-		         if Radiobutton3.checked=true then
+		         if SendErrorOnCleanPathRadioButton.checked=true then
 			 begin
 			      SendErrorPage('index.html', AContext);   //index.html im root verzeichnis nicht gefunden...
 			      exit;//ende, da eine erneute error page nicht gesendet werden muss...
 			 end;
 
-			 if Radiobutton4.checked=true then
+			 if SendFtpViewRadioButton.checked=true then
 			 begin
-			      sendeVerzeichnis(Edit2.text, AContext);   //index.html im root verzeichnis nicht gefunden...
+			      sendeVerzeichnis(WorkingDirectoryEdit.text, AContext);   //index.html im root verzeichnis nicht gefunden...
 			      exit; //und raus hier, da sonst evtl noch eine error-page mit kommt ;D
 			 end;  // sendeVerzeichnis (Path: string);
 
@@ -1055,32 +1117,32 @@ begin
 
 		            Ordner_hat_index:=false;     //erstmal von ausgehen, dass wir kein index haben...
 
-		            if fileexists(Edit2.text+RequestedFile+'index.htm') then
+		            if fileexists(WorkingDirectoryEdit.text+RequestedFile+'index.htm') then
 		            begin
 		                 RequestedFile:=RequestedFile+'index.htm';         //pfad+index speichern
 			         Ordner_hat_index := true;
 		            end;
 
-		            if fileexists(Edit2.text+RequestedFile+'index.html') then
+		            if fileexists(WorkingDirectoryEdit.text+RequestedFile+'index.html') then
 		            begin
-		                 RequestedFile:=RequestedFile+'index.html';                    //and (not fileexists(Edit2.text+RequestedFile+'index.htm')) then
+		                 RequestedFile:=RequestedFile+'index.html';                    //and (not fileexists(WorkingDirectoryEdit.text+RequestedFile+'index.htm')) then
 			         Ordner_hat_index := true;    //index erkannt und genommen verzeichnis abarbeitung wird dann übersprungen...
 		            end;
 
 
 		            //ok index.htm/L existiert nicht, also normal weitermachen...
-		            if Ordner_hat_index = false then  //ordner hat kein index.... also mache normal weiter...           //(not fileexists(Edit2.text+RequestedFile')) then     ///folgendes ist unnötig, da ja in requested schon der pfad + index drin ist....///// and (not fileexists(Edit2.text+RequestedFile+'index.htm')) then
+		            if Ordner_hat_index = false then  //ordner hat kein index.... also mache normal weiter...           //(not fileexists(WorkingDirectoryEdit.text+RequestedFile')) then     ///folgendes ist unnötig, da ja in requested schon der pfad + index drin ist....///// and (not fileexists(Edit2.text+RequestedFile+'index.htm')) then
 		            begin
 
-		                 if Radiobutton3.checked=true then
+		                 if SendErrorOnCleanPathRadioButton.checked=true then
 			         begin
 			              SendErrorPage(RequestedFile, AContext);   //ordner wurde nicht gefunden, bzw darf nicht gefunden werden ;)
 			              exit;//ende, da eine erneute error page nicht gesendet werden muss...
 		                 end;
 
-			         if Radiobutton4.checked=true then
+			         if SendFtpViewRadioButton.checked=true then
 			         begin
-			              sendeVerzeichnis(Edit2.text+RequestedFile, AContext);  //gibt verzeichniss
+			              sendeVerzeichnis(WorkingDirectoryEdit.text+RequestedFile, AContext);  //gibt verzeichniss
 			              exit; //und raus hier, da sonst evtl noch eine error-page mit kommt ;D
 			         end;
 	                    end;
@@ -1104,10 +1166,10 @@ begin
 
 
 
-	       if fileexists(Edit2.text+RequestedFile) then
+	       if fileexists(WorkingDirectoryEdit.text+RequestedFile) then
 	       begin  //angeforderte datei existiert, also senden ^^
 
-	              FileStream := TFileStream.Create(Edit2.text+RequestedFile, fmOpenRead or fmShareDenyNone );    //readonly status reicht aus ^^
+	              FileStream := TFileStream.Create(WorkingDirectoryEdit.text+RequestedFile, fmOpenRead or fmShareDenyNone );    //readonly status reicht aus ^^
 
 		      laenge:=FileStream.Size;
 
@@ -1134,7 +1196,7 @@ begin
                                     strForMemo := DatetoStr(now) + ' - ' + Timetostr(now)+' Verbindung mit: IP '+ fromIp + ' und Port: '+ fromPort + #13+#10;
                                     strForMemo := strForMemo + 'Möglicher Verbindungsabbruch des Clienten/Browsers. Z.B. Abbruch eines Downloads...' +#13+#10;
                                     strForMemo :=  strForMemo + 'Ansonsten ist irgendetwas schief gegangen bei:' +#13+#10;
-                                    strForMemo :=  strForMemo + Edit2.text+RequestedFile +#13+#10;
+                                    strForMemo :=  strForMemo + WorkingDirectoryEdit.text+RequestedFile +#13+#10;
                                     strForMemo :=  strForMemo + 'Fehlermeldung: '+ e.Message + #13+#10;
                                     strForMemo :=  strForMemo +  '---------------------------------------------------------------------------------'+#13+#10+#13+#10 ;
                                     DisplayOnMemo(strForMemo);
@@ -1147,15 +1209,15 @@ begin
 
                       strForMemo := DatetoStr(now) + ' - ' + Timetostr(now)+' Verbindung mit: IP '+ fromIp + ' und Port: '+ fromPort + #13+#10;
                       strForMemo := strForMemo + 'Folgende Datei gesendet:' +#13+#10;
-                      strForMemo :=  strForMemo + Edit2.text+RequestedFile +#13+#10;
+                      strForMemo :=  strForMemo + WorkingDirectoryEdit.text+RequestedFile +#13+#10;
                       strForMemo :=  strForMemo +  '---------------------------------------------------------------------------------'+#13+#10 +#13+#10;
                       DisplayOnMemo(strForMemo);
 
-	       end      //ende zu: if fileexists(Edit2.text+RequestedFile) then
+	       end      //ende zu: if fileexists(WorkingDirectoryEdit.text+RequestedFile) then
 	       else     //fileexist=false also sende error!
 	       begin
 	              SendErrorPage(RequestedFile, AContext);
-	       end; //ende von else von: if fileexists(Edit2.text+RequestedFile) then
+	       end; //ende von else von: if fileexists(WorkingDirectoryEdit.text+RequestedFile) then
 
 
 	  end;  //ende zu: if pos('GET /',Text)=1 then begin [..] END;
