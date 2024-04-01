@@ -12,7 +12,9 @@ uses
   cthreads,
   {$ENDIF}{$ENDIF}
   Interfaces, // this includes the LCL widgetset
-  Forms, indylaz, Unit1, Unit2, MyContentTypeFinder, MySystray, ServerSettingsSingleton
+  Forms, indylaz, Unit1, Unit2, MyContentTypeFinder, MySystray,
+  ServerSettingsSingleton, MyTCPServerUnit, WriteLogOutputUnit,
+  HTTPResponseHelper, HTTPGetHandling
   { you can add units after this };
 
 {$R *.res}

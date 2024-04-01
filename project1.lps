@@ -4,12 +4,12 @@
     <PathDelim Value="\"/>
     <Version Value="12"/>
     <BuildModes Active="Release"/>
-    <Units Count="7">
+    <Units Count="10">
       <Unit0>
         <Filename Value="project1.lpr"/>
         <IsPartOfProject Value="True"/>
-        <CursorPos X="88" Y="15"/>
-        <UsageCount Value="99"/>
+        <CursorPos X="38" Y="17"/>
+        <UsageCount Value="240"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
@@ -19,11 +19,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit1"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="315"/>
-        <CursorPos X="50" Y="325"/>
-        <UsageCount Value="99"/>
+        <TopLine Value="335"/>
+        <CursorPos X="42" Y="371"/>
+        <UsageCount Value="240"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit1>
@@ -34,9 +33,9 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Unit2"/>
-        <EditorIndex Value="5"/>
-        <CursorPos Y="3"/>
-        <UsageCount Value="87"/>
+        <EditorIndex Value="8"/>
+        <CursorPos X="11" Y="28"/>
+        <UsageCount Value="228"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit2>
@@ -44,159 +43,187 @@
         <Filename Value="mycontenttypefinder.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="MyContentTypeFinder"/>
-        <EditorIndex Value="3"/>
-        <CursorPos X="20" Y="11"/>
-        <UsageCount Value="36"/>
+        <EditorIndex Value="6"/>
+        <CursorPos X="32" Y="29"/>
+        <UsageCount Value="177"/>
         <Loaded Value="True"/>
       </Unit3>
       <Unit4>
         <Filename Value="mysystray.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="MySystray"/>
-        <EditorIndex Value="2"/>
-        <CursorPos X="40" Y="32"/>
-        <UsageCount Value="34"/>
+        <EditorIndex Value="5"/>
+        <CursorPos X="87" Y="48"/>
+        <UsageCount Value="175"/>
         <Loaded Value="True"/>
       </Unit4>
       <Unit5>
-        <Filename Value="unit1.lfm"/>
-        <EditorIndex Value="-1"/>
-        <UsageCount Value="4"/>
-        <DefaultSyntaxHighlighter Value="LFM"/>
-      </Unit5>
-      <Unit6>
         <Filename Value="serversettingssingleton.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="ServerSettingsSingleton"/>
-        <EditorIndex Value="4"/>
-        <TopLine Value="24"/>
-        <CursorPos X="29"/>
-        <UsageCount Value="26"/>
+        <EditorIndex Value="7"/>
+        <TopLine Value="4"/>
+        <CursorPos X="31" Y="59"/>
+        <UsageCount Value="167"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="mytcpserverunit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="MyTCPServerUnit"/>
+        <EditorIndex Value="2"/>
+        <CursorPos X="3" Y="84"/>
+        <UsageCount Value="152"/>
+        <Loaded Value="True"/>
       </Unit6>
+      <Unit7>
+        <Filename Value="writelogoutputunit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="WriteLogOutputUnit"/>
+        <EditorIndex Value="9"/>
+        <CursorPos X="48" Y="30"/>
+        <UsageCount Value="148"/>
+        <Loaded Value="True"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="httpresponsehelper.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="HTTPResponseHelper"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="6"/>
+        <CursorPos X="37" Y="32"/>
+        <UsageCount Value="146"/>
+        <Loaded Value="True"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="httpgethandling.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="HTTPGetHandling"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="77"/>
+        <CursorPos X="81" Y="101"/>
+        <UsageCount Value="146"/>
+        <Loaded Value="True"/>
+      </Unit9>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="29" HistoryIndex="28">
       <Position1>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="1027" Column="46" TopLine="987"/>
+        <Filename Value="httpgethandling.pas"/>
+        <Caret Line="96" Column="5" TopLine="92"/>
       </Position1>
       <Position2>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="77" Column="36" TopLine="273"/>
+        <Filename Value="httpgethandling.pas"/>
+        <Caret Line="199" Column="119" TopLine="187"/>
       </Position2>
       <Position3>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="345" TopLine="297"/>
+        <Filename Value="httpgethandling.pas"/>
+        <Caret Line="39" Column="66" TopLine="24"/>
       </Position3>
       <Position4>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="313" Column="22" TopLine="303"/>
+        <Filename Value="httpgethandling.pas"/>
+        <Caret Line="201" Column="16" TopLine="183"/>
       </Position4>
       <Position5>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="58" Column="44" TopLine="30"/>
+        <Filename Value="httpgethandling.pas"/>
+        <Caret Line="233" Column="61" TopLine="209"/>
       </Position5>
       <Position6>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="190" Column="82" TopLine="170"/>
+        <Filename Value="httpgethandling.pas"/>
+        <Caret Line="242" Column="19" TopLine="227"/>
       </Position6>
       <Position7>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="57" Column="38" TopLine="30"/>
+        <Filename Value="httpgethandling.pas"/>
+        <Caret Line="51" TopLine="32"/>
       </Position7>
       <Position8>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="190" Column="82" TopLine="245"/>
+        <Filename Value="httpresponsehelper.pas"/>
+        <Caret Line="97" Column="17" TopLine="88"/>
       </Position8>
       <Position9>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="55" Column="35" TopLine="30"/>
+        <Filename Value="httpresponsehelper.pas"/>
+        <Caret Line="39" Column="20"/>
       </Position9>
       <Position10>
         <Filename Value="unit1.pas"/>
-        <Caret Line="190" Column="82" TopLine="149"/>
+        <Caret Line="14" Column="96"/>
       </Position10>
       <Position11>
         <Filename Value="unit1.pas"/>
-        <Caret Line="56" Column="36" TopLine="30"/>
+        <Caret Line="177" Column="4" TopLine="151"/>
       </Position11>
       <Position12>
         <Filename Value="unit1.pas"/>
-        <Caret Line="190" Column="92" TopLine="149"/>
+        <Caret Line="169" TopLine="159"/>
       </Position12>
       <Position13>
         <Filename Value="unit1.pas"/>
-        <Caret Line="268" Column="71" TopLine="246"/>
+        <Caret Line="168" TopLine="158"/>
       </Position13>
       <Position14>
         <Filename Value="unit1.pas"/>
-        <Caret Line="17" Column="66"/>
+        <Caret Line="46" Column="18" TopLine="43"/>
       </Position14>
       <Position15>
         <Filename Value="unit1.pas"/>
-        <Caret Line="997" Column="114" TopLine="975"/>
+        <Caret Line="48" Column="16" TopLine="40"/>
       </Position15>
       <Position16>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="1097" Column="91" TopLine="1076"/>
+        <Filename Value="httpresponsehelper.pas"/>
+        <Caret Line="72" Column="57" TopLine="58"/>
       </Position16>
       <Position17>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="133" Column="37" TopLine="108"/>
+        <Filename Value="httpresponsehelper.pas"/>
+        <Caret Line="189" Column="49" TopLine="162"/>
       </Position17>
       <Position18>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="240" Column="50" TopLine="205"/>
+        <Filename Value="httpresponsehelper.pas"/>
+        <Caret Line="260" Column="50" TopLine="248"/>
       </Position18>
       <Position19>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="270" Column="34" TopLine="234"/>
+        <Filename Value="httpresponsehelper.pas"/>
+        <Caret Line="40" Column="58" TopLine="13"/>
       </Position19>
       <Position20>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="267" Column="15" TopLine="232"/>
+        <Filename Value="httpresponsehelper.pas"/>
+        <Caret Line="85" Column="44" TopLine="45"/>
       </Position20>
       <Position21>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="199" Column="30" TopLine="181"/>
+        <Filename Value="httpgethandling.pas"/>
+        <Caret Line="55" Column="19" TopLine="38"/>
       </Position21>
       <Position22>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="118" Column="15" TopLine="89"/>
+        <Filename Value="httpgethandling.pas"/>
+        <Caret Line="268" Column="55" TopLine="225"/>
       </Position22>
       <Position23>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="181" Column="111" TopLine="161"/>
+        <Filename Value="httpgethandling.pas"/>
+        <Caret Line="260" Column="31" TopLine="225"/>
       </Position23>
       <Position24>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="119" Column="15" TopLine="498"/>
+        <Filename Value="httpresponsehelper.pas"/>
+        <Caret Line="28" Column="39"/>
       </Position24>
       <Position25>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="186" Column="27" TopLine="143"/>
+        <Filename Value="httpresponsehelper.pas"/>
+        <Caret Line="33" Column="56"/>
       </Position25>
       <Position26>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="874" Column="22" TopLine="828"/>
+        <Filename Value="httpresponsehelper.pas"/>
+        <Caret Line="108" Column="42" TopLine="91"/>
       </Position26>
       <Position27>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="997" Column="46" TopLine="975"/>
+        <Filename Value="httpgethandling.pas"/>
+        <Caret Line="249" Column="23" TopLine="225"/>
       </Position27>
       <Position28>
         <Filename Value="unit1.pas"/>
-        <Caret Line="107" Column="59" TopLine="84"/>
+        <Caret Line="91" Column="45" TopLine="67"/>
       </Position28>
       <Position29>
         <Filename Value="unit1.pas"/>
-        <Caret Line="407" Column="56" TopLine="380"/>
+        <Caret Line="328" Column="13" TopLine="321"/>
       </Position29>
-      <Position30>
-        <Filename Value="unit1.pas"/>
-        <Caret Line="661" Column="59" TopLine="618"/>
-      </Position30>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>

@@ -243,22 +243,6 @@ object Form1: TForm1
       end
     end
   end
-  object Label3: TLabel
-    Left = 300
-    Height = 25
-    Top = 699
-    Width = 51
-    Caption = 'Label3'
-    ParentColor = False
-  end
-  object Button3: TButton
-    Left = 360
-    Height = 38
-    Top = 680
-    Width = 112
-    Caption = 'Button3'
-    TabOrder = 1
-  end
   object StatusBar1: TStatusBar
     Left = 0
     Height = 36

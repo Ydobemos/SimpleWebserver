@@ -20,6 +20,8 @@ type
     FSendIndividualErrorPage: Boolean;
     FIndividualErrorPagePath: string;
     FSendFtpLikeViewOnEmptyDir: Boolean;
+    FProgramVersion: string;
+    FPath_delimiter_OS: string;
 
     class var FInstance: TServerSettingsSingleton;
     constructor Create;
@@ -32,6 +34,9 @@ type
     property SendIndividualErrorPage: Boolean read FSendIndividualErrorPage write FSendIndividualErrorPage;
     property IndividualErrorPagePath: string read FIndividualErrorPagePath write FIndividualErrorPagePath;
     property SendFtpLikeViewOnEmptyDir: Boolean read FSendFtpLikeViewOnEmptyDir write FSendFtpLikeViewOnEmptyDir;
+    property ProgramVersion: string read FProgramVersion write FProgramVersion;
+    property Path_delimiter_OS: string read FPath_delimiter_OS write FPath_delimiter_OS;
+
   end;
 
 implementation
@@ -50,6 +55,8 @@ begin
   FSendIndividualErrorPage := false;
   FIndividualErrorPagePath := '';
   FSendFtpLikeViewOnEmptyDir := false;
+  FProgramVersion := '';
+  FPath_delimiter_OS := '\';
 end;
 
 class function TServerSettingsSingleton.Instance: TServerSettingsSingleton;
