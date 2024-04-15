@@ -21,7 +21,7 @@ type
   THTTPGetHandling = class
   public
     class procedure CheckForGetAndSendResponse(AContext: TIdContext; Text: string);
-    class function CheckIfRootRequestedAndSendIndexIfTrue(AContext: TIdContext; restText:string):Boolean;
+    class function CheckIfRootRequestedAndSendIndexIfTrue(AContext: TIdContext; restTextOfFirstLineHttpGet:string):Boolean;
     class procedure SendFileIfExistsOrError(AContext: TIdContext; RequestedFile: string);
   end;
 
@@ -71,6 +71,12 @@ begin
          if CheckIfRootRequestedAndSendIndexIfTrue(AContext, firstLine) then
             exit;
 
+
+
+
+
+
+
          //Wenn nicht root abgefragt wurde, dann wurde eine Datei oder Verzeichnis angefragt:
           //Man hat also sowas wie: 'GET /infos/ HTTP...
 	 begin
@@ -80,8 +86,12 @@ begin
                posi := LastDelimiter(' ', firstLine);
 	       RequestedFile:=Copy(firstLine, 1, posi-1);    //text2 ist nun "infos/"
 
-	       position :=length(RequestedFile);
-	       letzteZeichen := Copy(RequestedFile, position,1 );  //nun sollte das letzte zeichen in "letzteZeichen" drin sein
+
+               //Nicht mehr benötigt:
+	       //position :=length(RequestedFile);
+	       //letzteZeichen := Copy(RequestedFile, position,1 );  //nun sollte das letzte zeichen in "letzteZeichen" drin sein
+
+
 	       //RequestedFile:=Copy(temp, 1, posi-1);
 
 
@@ -110,8 +120,9 @@ begin
                //      wenn nicht, dann checken, ob es den pfad/ordner gibt....
 
                //es wird ein verzeichnis angefordert... denn das letzte zeichen ist ein "/"
-	       if pos('/',letzteZeichen) = 1 then
-	       begin
+//	       if pos('/',letzteZeichen) = 1 then      // TServerSettingsSingleton.Instance.Path_delimiter_OS muss nicht gemacht werden, weil letzteZeichen noch vor der Umwandlung/stringreplace gesetzt wurde
+               if DirectoryExists(TServerSettingsSingleton.Instance.WorkingDirectoryPath+RequestedFile) then
+               begin
                //testen ob es in dem verzeichnis eine index.html/index.htm datei gibt und diese dann aufrufen...
 
 		      Ordner_hat_index:=false;     //erstmal von ausgehen, dass wir kein index haben...
@@ -132,18 +143,18 @@ begin
 		      //ok index.htm/L existiert nicht, also normal weitermachen...
 		      if Ordner_hat_index = false then  //ordner hat kein index.... also mache normal weiter...           //(not fileexists(WorkingDirectoryEdit.text+RequestedFile')) then     ///folgendes ist unnötig, da ja in requested schon der pfad + index drin ist....///// and (not fileexists(Edit2.text+RequestedFile+'index.htm')) then
 		      begin
-
-		           if not TServerSettingsSingleton.Instance.SendFtpLikeViewOnEmptyDir then
+                           if TServerSettingsSingleton.Instance.SendFtpLikeViewOnEmptyDir then
+			   begin
+			        THTTPResponseHelper.sendeVerzeichnis(TServerSettingsSingleton.Instance.WorkingDirectoryPath+RequestedFile, AContext);  //gibt verzeichniss
+			        exit; //und raus hier, da sonst evtl noch eine error-page mit kommt ;D
+			   end
+                           else
 			   begin
 			        THTTPResponseHelper.SendErrorPage(RequestedFile, AContext);   //ordner wurde nicht gefunden, bzw darf nicht gefunden werden ;)
 			        exit;//ende, da eine erneute error page nicht gesendet werden muss...
 		           end;
 
-			   if TServerSettingsSingleton.Instance.SendFtpLikeViewOnEmptyDir then
-			   begin
-			        THTTPResponseHelper.sendeVerzeichnis(TServerSettingsSingleton.Instance.WorkingDirectoryPath+RequestedFile, AContext);  //gibt verzeichniss
-			        exit; //und raus hier, da sonst evtl noch eine error-page mit kommt ;D
-			   end;
+
 	              end;
 
 
@@ -178,20 +189,20 @@ end;
 
 
 
-class function THTTPGetHandling.CheckIfRootRequestedAndSendIndexIfTrue(AContext: TIdContext; restText:string):Boolean;
+class function THTTPGetHandling.CheckIfRootRequestedAndSendIndexIfTrue(AContext: TIdContext; restTextOfFirstLineHttpGet:string):Boolean;
 var
   RequestedFile: string;
 begin
      result := false;
 
-     //if pos(' HTTP',restText)=1 then  //== "GET / HTTP/1.1" oder so ähnlich  //Leerzeichen hinter /  -> root aufruf
+     //if pos(' HTTP',restTextOfFirstLineHttpGet)=1 then  //== "GET / HTTP/1.1" oder so ähnlich  //Leerzeichen hinter /  -> root aufruf
      //Das letzte Vorkommens des Leerzeichen finden. Ich habe von Firefox schon anfragen mit 'GET / undefined' bekommen. Warum auch immer...
      //Darum kann man ggf. nicht nach ' HTTP' suchen. Durch folgendes wird es sicher:
      //Es wird nun geschaut, ob das letzte Leerzeichen an Position 1 steht
      //Vorher wurde bereits 'GET /' gelöscht und auch alles ab dem ersten Umbruch wurde entfernt.
      //Kommt nun das letzte Leerzeichen, dann kommt danach nur noch "HTTP/1.1" oder ähnliches.
      //Somit ist es root:
-     if LastDelimiter(' ', restText) = 1 then
+     if LastDelimiter(' ', restTextOfFirstLineHttpGet) = 1 then
      begin
           result := true;
 
@@ -217,26 +228,18 @@ begin
              //index.html im root verzeichnis nicht gefunden...
 
              //Überprüfen, ob die FTP ähnliche Ansicht übermittelt werden soll:
-              if TServerSettingsSingleton.Instance.SendFtpLikeViewOnEmptyDir then
-	      begin
-		  THTTPResponseHelper.sendeVerzeichnis(TServerSettingsSingleton.Instance.WorkingDirectoryPath, AContext);  //gibt Root-Verzeichniss zurück
-		  exit;
-	      end
-              else   //Der RadioCheck sitzt beim "Error 404 Ausgeben", daher Fehlermeldung ausgeben:
-              begin
-	         if TServerSettingsSingleton.Instance.SendFtpLikeViewOnEmptyDir then
-	         begin
-		    THTTPResponseHelper.sendeVerzeichnis(TServerSettingsSingleton.Instance.WorkingDirectoryPath, AContext);
-		    exit;
-	         end
-                 else
-                 begin
-		    THTTPResponseHelper.SendErrorPage('index.html', AContext);   //index.html im root verzeichnis nicht gefunden...
-		    exit;
-                 end;
-              end;
-          end;
+	     if TServerSettingsSingleton.Instance.SendFtpLikeViewOnEmptyDir then
+	     begin
+		THTTPResponseHelper.sendeVerzeichnis(TServerSettingsSingleton.Instance.WorkingDirectoryPath, AContext);  //gibt Root-Verzeichniss zurück
+		exit;
+	     end
+             else   //Der RadioCheck sitzt beim "Error 404 Ausgeben", daher Fehlermeldung ausgeben:
+             begin
+		THTTPResponseHelper.SendErrorPage('index.html', AContext);   //index.html im root verzeichnis nicht gefunden...
+		exit;
+             end;
 
+          end;
      end;
 end;
 

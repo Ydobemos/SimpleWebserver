@@ -2,12 +2,12 @@ object Form1: TForm1
   Left = 459
   Height = 853
   Top = 94
-  Width = 522
+  Width = 523
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Simple Webserver'
   ClientHeight = 823
-  ClientWidth = 522
+  ClientWidth = 523
   DesignTimePPI = 144
   Menu = MainMenu1
   OnClose = FormClose
@@ -247,7 +247,7 @@ object Form1: TForm1
     Left = 0
     Height = 36
     Top = 787
-    Width = 522
+    Width = 523
     Panels = <    
       item
         Width = 0

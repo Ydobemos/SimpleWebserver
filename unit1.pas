@@ -168,7 +168,14 @@ end;
 function TForm1.SaveServerSettingsToSingleton: Boolean;
 begin
  Result := True;
+
   TServerSettingsSingleton.Instance.WorkingDirectoryPath := WorkingDirectoryEdit.Text;
+  if not DirectoryExists(TServerSettingsSingleton.Instance.WorkingDirectoryPath) then
+  Begin
+    showmessage('Bitte ein gültiges Arbeitsverzeichnis eintragen!');
+    Result := False;
+    exit;
+  end;
 
   try
     TServerSettingsSingleton.Instance.Port := StrToInt(PortEdit.text);
@@ -195,7 +202,7 @@ begin
   end;
 
   TServerSettingsSingleton.Instance.SendIndividualErrorPage := OwnErorPageToSendRadioButton.checked;
-  if TServerSettingsSingleton.Instance.SendIndividualErrorPage = true then
+  if TServerSettingsSingleton.Instance.SendIndividualErrorPage then
      TServerSettingsSingleton.Instance.IndividualErrorPagePath := ErrorPagePathEdit.text;
 
   TServerSettingsSingleton.Instance.SendFtpLikeViewOnEmptyDir := SendFtpViewRadioButton.checked;
@@ -305,13 +312,13 @@ begin
 //Ein aktives binding auf IPv4 ist gerade nicht nötig. Kann man aber mal im Hinterkopf behalten:
    //IdTCPServer.Bindings.Items[0].IPVersion := Id_IPv4 ;
 
-      try
+   try
       MyTCPServer.StartServer;    //Server ist nun aktiv!
    except
       on e: Exception do
       Begin
           showmessage('Fehler beim Starten des Servers! ' +#13+#10+
-                      'Ist der Port schon in Benutzung? Ein höherer Port, der keine speziellen Recht braucht und nicht bereits benutzt wird, könnte das Problem beheben!'  +#13+#10+
+                      'Ist der Port schon in Benutzung? Ein höherer Port, der keine speziellen Rechte braucht und nicht bereits benutzt wird, könnte das Problem beheben!'  +#13+#10+
                       'Probieren Sie mal Port 8080 oder Port 8083 aus.'  +#13+#10 +#13+#10+
                       'Ansonsten lautet die Fehlermeldung: ' +#13+#10+
                       e.Message );
@@ -390,7 +397,8 @@ procedure TForm1.WorkDirectorySelectButtonClick(Sender: TObject);
 var Pfad:String;
 begin
    //uses FileCtrl;
-   SelectDirectory('Ordner auswählen', '' ,Pfad);
+   //SelectDirectory('Ordner auswählen', '' ,Pfad);
+   Dialogs.SelectDirectory('Ordner auswählen', '' ,Pfad);
    WorkingDirectoryEdit.Text:=pfad;
 end;
 
